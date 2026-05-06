@@ -4,7 +4,7 @@ export const EXCHANGES = {
 
 export const QUEUES = {
   NOTIFICATIONS: 'notifications-queue',
-  NOTIFICATIONS_DLQ: 'notifications-dlq',
+  NOTIFICATIONS_DLQ: 'notifications-dlq', // dead letter queue
 } as const;
 
 export const ROUTING_KEYS = {
