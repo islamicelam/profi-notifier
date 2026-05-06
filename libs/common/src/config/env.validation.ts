@@ -8,7 +8,7 @@ export const envValidationSchema = Joi.object({
   // RabbitMQ
   RABBITMQ_URL: Joi.string()
     .uri({ scheme: ['amqp', 'amqps'] })
-    .required(),
+    .optional(),
 
   // Redis
   REDIS_HOST: Joi.string().default('localhost'),

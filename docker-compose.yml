@@ -36,6 +36,75 @@ services:
       start_period: 10s
     restart: unless-stopped
 
+  producer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: producer
+    image: notifier-platform/producer:latest
+    container_name: notifier-producer
+    ports:
+      - '3000:3000'
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      PRODUCER_PORT: 3000
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  consumer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: consumer
+    image: notifier-platform/consumer:latest
+    container_name: notifier-consumer
+    ports:
+      - '3001:3001'
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      CONSUMER_PORT: 3001
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      NOTIFIER_URL: http://notifier:3002
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  notifier:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: notifier
+    image: notifier-platform/notifier:latest
+    container_name: notifier-notifier
+    ports:
+      - '3002:3002'
+    environment:
+      NODE_ENV: production
+      PORT: 3002
+      NOTIFIER_PORT: 3002
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
+    restart: unless-stopped
+
 volumes:
   rabbitmq_data:
   redis_data:
