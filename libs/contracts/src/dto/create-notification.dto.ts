@@ -2,6 +2,8 @@ import { Type } from 'class-transformer';
 import {
   IsEnum,
   IsNotEmpty,
+  IsNotEmptyObject,
+  IsObject,
   IsString,
   MaxLength,
   ValidateNested,
@@ -24,6 +26,8 @@ export class CreateNotificationDto {
   @IsEnum(NotificationChannel)
   channel: NotificationChannel;
 
+  @IsObject()
+  @IsNotEmptyObject()
   @ValidateNested()
   @Type(() => TelegramPayloadDto)
   payload: TelegramPayloadDto;

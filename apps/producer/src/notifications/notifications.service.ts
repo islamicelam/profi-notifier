@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import {
   CreateNotificationDto,
   EXCHANGES,
@@ -27,7 +27,7 @@ export class NotificationsService {
 
   async publish(dto: CreateNotificationDto): Promise<{ eventId: string }> {
     const event: NotificationEvent = {
-      eventId: uuidv4(),
+      eventId: randomUUID(),
       channel: dto.channel,
       payload: dto.payload,
       occurredAt: new Date().toISOString(),
