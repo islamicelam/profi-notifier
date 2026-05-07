@@ -6,7 +6,7 @@
 
 ## Архитектура
 
-\`\`\`mermaid
+```mermaid
 flowchart LR
 Client([HTTP Client])
 Producer[Producer<br/>:3000]
@@ -25,7 +25,7 @@ Telegram([Telegram<br/>Bot API])
 
     RMQ -.->|nack after retries| DLQ[(DLQ)]
 
-\`\`\`
+```
 
 **Producer** принимает HTTP-запросы, валидирует payload через DTO, генерирует UUID для идемпотентности, публикует event в RabbitMQ с метаданными и persistent flag. Возвращает клиенту 202 Accepted.
 
@@ -58,7 +58,7 @@ Telegram([Telegram<br/>Bot API])
 
 ### Шаги
 
-\`\`\`bash
+```bash
 
 # 1. Клонировать репозиторий
 
@@ -80,13 +80,13 @@ docker compose up -d --build
 # 5. Проверить статус
 
 docker compose ps
-\`\`\`
+```
 
 Через 30–60 секунд все контейнеры будут `healthy`.
 
 ### Тест end-to-end
 
-\`\`\`bash
+```bash
 curl -X POST http://localhost:3000/notifications \\
 -H "Content-Type: application/json" \\
 -d '{
@@ -96,7 +96,7 @@ curl -X POST http://localhost:3000/notifications \\
 "message": "Hello from Notifier Platform!"
 }
 }'
-\`\`\`
+```
 
 В ответе — `{ "eventId": "..." }`. Через секунду сообщение придёт в Telegram.
 
@@ -104,7 +104,7 @@ curl -X POST http://localhost:3000/notifications \\
 
 Удобно при активной разработке — приложения запускаются через `pnpm start:dev` с hot-reload, инфраструктура (RabbitMQ, Redis) — в Docker.
 
-\`\`\`bash
+```bash
 
 # Установка зависимостей (требуется pnpm)
 
@@ -119,13 +119,13 @@ docker compose up -d rabbitmq redis
 pnpm start:dev producer
 pnpm start:dev consumer
 pnpm start:dev notifier
-\`\`\`
+```
 
 ### Установка pnpm
 
 Если pnpm ещё не установлен:
 
-\`\`\`bash
+```bash
 
 # Через corepack (поставляется с Node.js)
 
@@ -139,7 +139,7 @@ brew install pnpm
 # Или через npm
 
 npm install -g pnpm
-\`\`\`
+```
 
 ## Настройка Telegram-бота
 
@@ -161,20 +161,22 @@ npm install -g pnpm
 Принимает событие, публикует в RabbitMQ для асинхронной обработки.
 
 **Request body:**
-\`\`\`json
+
+```json
 {
-"channel": "telegram",
-"payload": {
-"chatId": "123456789",
-"message": "Hello"
+  "channel": "telegram",
+  "payload": {
+    "chatId": "123456789",
+    "message": "Hello"
+  }
 }
-}
-\`\`\`
+```
 
 **Response 202:**
-\`\`\`json
+
+```json
 { "eventId": "uuid-v4" }
-\`\`\`
+```
 
 **Response 400** при невалидном payload или лишних полях.
 
@@ -183,18 +185,19 @@ npm install -g pnpm
 Отправляет сообщение в Telegram. Используется Consumer'ом, но доступен и снаружи (для отладки).
 
 **Request body:**
-\`\`\`json
+
+```json
 {
-"chatId": "123456789",
-"message": "Hello"
+  "chatId": "123456789",
+  "message": "Hello"
 }
-\`\`\`
+```
 
 **Response 204** при успехе.
 
 ## Структура проекта
 
-\`\`\`
+```
 profi-notifier/
 ├── apps/
 │ ├── producer/ # HTTP API → RabbitMQ
@@ -208,7 +211,7 @@ profi-notifier/
 ├── Dockerfile # multi-stage, параметризован APP_NAME
 ├── .env.example
 └── README.md
-\`\`\`
+```
 
 ## Архитектурные решения
 
