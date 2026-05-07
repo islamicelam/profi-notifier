@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { LoggerModule } from 'nestjs-pino';
 import { NotifierController } from './notifier.controller';
-import { NotifierService } from './notifier.service';
 import { AppConfigModule, loggerModuleAsyncOptions } from '@app/common';
 import { NotificationsModule } from './notifications/notifications.module';
 
@@ -12,6 +11,5 @@ import { NotificationsModule } from './notifications/notifications.module';
     NotificationsModule,
   ],
   controllers: [NotifierController],
-  providers: [NotifierService],
 })
 export class NotifierModule {}

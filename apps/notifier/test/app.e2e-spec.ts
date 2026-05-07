@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { NotifierModule } from './../src/notifier.module';
 
 describe('NotifierController (e2e)', () => {
@@ -16,9 +16,7 @@ describe('NotifierController (e2e)', () => {
   });
 
   it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+    const server = app.getHttpServer() as Parameters<typeof request>[0];
+    return request(server).get('/').expect(200).expect('Hello World!');
   });
 });
